@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lama Robo Advisor</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h2>Welcome to Lama Robo Advisor</h2>
+      <img
+        src="{{ url_for('static', filename='images/istockphoto-1634086519-1024x1024.jpg') }}"
+        alt="Lama Robo Advisor"
+      />
+      <form action="/financial_FAQ" method="post">
+        <input type="submit" value="Financial FAQ" />
+      </form>
+      <!-- Adding a new button with a common Singapore joke -->
+      <form action="/joke" method="post">
+        <input type="submit" value="Tell a Joke" />
+      </form>
+    </div>
+  </body>
+</html>
