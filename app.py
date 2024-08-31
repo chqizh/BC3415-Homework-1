@@ -4,6 +4,7 @@ import random
 import os
 from dotenv import load_dotenv
 import joblib
+import sklearn
 
 load_dotenv()
 API_KEY = os.getenv('API_KEY')
