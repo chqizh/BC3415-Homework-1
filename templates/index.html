@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lama Robo Advisor</title>
+    <title>BC3415 Chatbot Advisor</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/style.css') }}"
@@ -11,7 +11,7 @@
   </head>
   <body>
     <div class="container">
-      <h2>Welcome to Lama Robo Advisor</h2>
+      <h2>Welcome to BC3415 Chatbot Advisor</h2>
       <img
         src="{{ url_for('static', filename='images/istockphoto-1634086519-1024x1024.jpg') }}"
         alt="Lama Robo Advisor"
@@ -22,6 +22,10 @@
       <!-- Adding a new button with a common Singapore joke -->
       <form action="/joke" method="post">
         <input type="submit" value="Tell a Joke" />
+      </form>
+      <!-- Adding a for predictive model. Still a work in progress. -->
+      <form action="/prediction" method="get">
+        <input type="submit" value="Prediction" />
       </form>
     </div>
   </body>

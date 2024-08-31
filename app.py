@@ -3,6 +3,7 @@ import google.generativeai as palm
 import random
 import os
 from dotenv import load_dotenv
+import joblib
 
 load_dotenv()
 API_KEY = os.getenv('API_KEY')
@@ -39,6 +40,26 @@ jokes = [
 def joke():
     joke = random.choice(jokes)
     return render_template('joke.html', joke=joke)
+
+model = joblib.load('model/dbs_model.jl')
+
+@app.route('/prediction', methods=['POST', 'GET'])
+def prediction():
+    predicted_price = None
+    if request.method == 'POST':
+        try:
+            # Get the input value from the form
+            sgd_value = float(request.form['sgd_value'])
+
+            # Make a prediction using the loaded model
+            predicted_price = model.predict([[sgd_value]])
+
+        except Exception as e:
+            print("Error during prediction:", e)
+            return "Bad Request: " + str(e), 400
+
+    return render_template('prediction.html', predicted_price=predicted_price)
+
 
 if __name__ == "__main__":
     app.run()
