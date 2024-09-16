@@ -1,5 +1,21 @@
-<h2>reply :</h2>
-<h4>{{r}}</h4>
-<form action="/" method="post">
-  <input type="submit" value="Main" />
-</form>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reply Page</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h2>Reply:</h2>
+      <p>{{r}}</p>
+      <form action="/" method="post">
+        <input type="submit" value="Main" />
+      </form>
+    </div>
+  </body>
+</html>

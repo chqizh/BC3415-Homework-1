@@ -9,8 +9,7 @@ import sklearn
 load_dotenv()
 API_KEY = os.getenv('API_KEY')
 palm.configure(api_key=API_KEY)
-print("API_KEY " + API_KEY)
-model = {"model": "models/text-bison-001"}
+#print("API_KEY " + API_KEY)
 app = Flask(__name__)
 
 @app.route("/",methods=["GET","POST"])
@@ -21,11 +20,15 @@ def index():
 def financial_FAQ():
     return(render_template("financial_FAQ.html"))
 
+model = {"model": "models/text-bison-001"}
+
 @app.route("/makersuite",methods=["GET","POST"])
 def makersuite():
     q = request.form.get("q")
-    r = palm.chat(messages=q, **model)
-    return(render_template("makersuite.html",r=r.last))
+    r = palm.generate_text(prompt=q, model="models/text-bison-001")
+    #r = palm.chat(messages=q, **model)
+    print(r)
+    return(render_template("makersuite.html", r=r.result))
 
 jokes = [
     "Why couldn't encik order McSpicy upsize? Because he's a regular.",
@@ -42,7 +45,7 @@ def joke():
     joke = random.choice(jokes)
     return render_template('joke.html', joke=joke)
 
-model = joblib.load('model/dbs_model.jl')
+predictionmodel = joblib.load('model/dbs_model.jl')
 
 @app.route('/prediction', methods=['POST', 'GET'])
 def prediction():
@@ -53,7 +56,7 @@ def prediction():
             sgd_value = float(request.form['sgd_value'])
 
             # Make a prediction using the loaded model
-            predicted_price = model.predict([[sgd_value]])
+            predicted_price = predictionmodel.predict([[sgd_value]])
 
         except Exception as e:
             print("Error during prediction:", e)
