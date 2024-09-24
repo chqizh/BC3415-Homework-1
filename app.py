@@ -1,5 +1,5 @@
 from flask import Flask,render_template,request
-import google.generativeai as palm
+import google.generativeai as genai
 import random
 import os
 from dotenv import load_dotenv
@@ -8,7 +8,7 @@ import sklearn
 
 load_dotenv()
 API_KEY = os.getenv('API_KEY')
-palm.configure(api_key=API_KEY)
+genai.configure(api_key=API_KEY)
 #print("API_KEY " + API_KEY)
 app = Flask(__name__)
 
@@ -24,11 +24,10 @@ model = {"model": "models/text-bison-001"}
 
 @app.route("/makersuite",methods=["GET","POST"])
 def makersuite():
+    model = genai.GenerativeModel('gemini-1.5-flash')
     q = request.form.get("q")
-    r = palm.generate_text(prompt=q, model="models/text-bison-001")
-    #r = palm.chat(messages=q, **model)
-    print(r)
-    return(render_template("makersuite.html", r=r.result))
+    r = model.generate_content(q)
+    return(render_template("makersuite.html", r=r.text))
 
 jokes = [
     "Why couldn't encik order McSpicy upsize? Because he's a regular.",
