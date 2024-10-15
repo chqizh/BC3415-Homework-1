@@ -5,6 +5,8 @@ import os
 from dotenv import load_dotenv
 import joblib
 import sklearn
+import textblob
+#from web3 import Web3 # Too large for Render.com, using JS Web3 instead
 
 load_dotenv()
 API_KEY = os.getenv('API_KEY')
@@ -63,6 +65,26 @@ def prediction():
 
     return render_template('prediction.html', predicted_price=predicted_price)
 
+@app.route('/sentiment', methods=["GET", "POST"])
+def sentiment():
+    sentiment = None
+    if request.method == 'POST':
+        try:
+            # Get the input value from the form
+            text = str(request.form['text'])
+
+            # Make a prediction using the loaded model
+            sentiment = textblob.TextBlob(text).sentiment
+
+        except Exception as e:
+            print("Error during prediction:", e)
+            return "Bad Request: " + str(e), 400
+    
+    return render_template('sentiment.html', sentiment=sentiment)
+
+@app.route('/transfer', methods=["GET", "POST"])
+def transfer():
+    return render_template('transfer.html')
 
 if __name__ == "__main__":
     app.run()
