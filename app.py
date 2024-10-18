@@ -5,7 +5,10 @@ import os
 from dotenv import load_dotenv
 import joblib
 import sklearn
-import textblob
+from textblob import Textblob
+from transformers import pipeline
+#import torch
+#from diffusers import StableDiffusionPipeline, DiffusionPipeline,DPMSolverMultistepScheduler
 #from web3 import Web3 # Too large for Render.com, using JS Web3 instead
 
 load_dotenv()
@@ -70,11 +73,11 @@ def sentiment():
     sentiment = None
     if request.method == 'POST':
         try:
-            # Get the input value from the form
             text = str(request.form['text'])
+            sentiment_textblob = TextBlob(text).sentiment
 
-            # Make a prediction using the loaded model
-            sentiment = textblob.TextBlob(text).sentiment
+            classifier = pipeline("sentiment-analysis")
+            sentiment_transformers = classifier(text)
 
         except Exception as e:
             print("Error during prediction:", e)
@@ -86,5 +89,24 @@ def sentiment():
 def transfer():
     return render_template('transfer.html')
 
+"""
+@app.route('/image_generator', methods=["GET", "POST"])
+def image_generator():
+    image = None
+    if request.method == 'POST':
+        query = request.form.get("query")
+        pipeline = StableDiffusionPipeline(model="CompVis/stable-diffusion-v1-4", torch_dtype=torch.float16)
+        pipe = pipe.to("cuda")
+        image = pipeline.run(query).images[0]
+    return render_template('image_generator.html', img = image)
+
+@app.route('/video_generator', methods=["GET", "POST"])
+def video_generator():
+    video = None
+    if request.method == "POST":
+        query = request.form.get("query")
+        video = genai.GenerativeModel('gemini-1.5-flash').generate_video(query)
+    return render_template('video_generator.html', vid = video)
+"""
 if __name__ == "__main__":
     app.run()
