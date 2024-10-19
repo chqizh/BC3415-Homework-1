@@ -23,8 +23,11 @@
                 />
                 <input type="submit" value="Analyse" /> 
             </form>
-            {% if predicted_price is not none %}
-            <p>Predicted DBS Share Price: {{ predicted_price[0] }}</p>
+            {% if sentiment_textblob is not none %}
+            <p>Sentiment (TextBlob): {{ sentiment_textblob }}</p>
+            {% endif %}
+            {% if sentiment_transformers is not none %}
+            <p>Sentiment (Transformers): {{ sentiment_transformers }}</p>
             {% endif %}
             <form action="/" method="get">
                 <input type="submit" value="Back to Home" />

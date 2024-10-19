@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 import joblib
 import sklearn
-from textblob import Textblob
+from textblob import TextBlob
 from transformers import pipeline
 #import torch
 #from diffusers import StableDiffusionPipeline, DiffusionPipeline,DPMSolverMultistepScheduler
@@ -70,43 +70,26 @@ def prediction():
 
 @app.route('/sentiment', methods=["GET", "POST"])
 def sentiment():
-    sentiment = None
+    sentiment_textblob = None
+    sentiment_transformers = None
     if request.method == 'POST':
         try:
             text = str(request.form['text'])
+            print(text)
             sentiment_textblob = TextBlob(text).sentiment
-
-            classifier = pipeline("sentiment-analysis")
-            sentiment_transformers = classifier(text)
+            sentiment_transformers = pipeline("sentiment-analysis", device="mps")(text)
+            #sentiment_transformers = pipeline("sentiment-analysis", device="cpu")(text)
+            sentiment_transformers = f"label: {sentiment_transformers[0]['label']}, score: {sentiment_transformers[0]['score']}"
 
         except Exception as e:
             print("Error during prediction:", e)
             return "Bad Request: " + str(e), 400
     
-    return render_template('sentiment.html', sentiment=sentiment)
+    return render_template('sentiment.html', sentiment_textblob=sentiment_textblob, sentiment_transformers=sentiment_transformers)
 
 @app.route('/transfer', methods=["GET", "POST"])
 def transfer():
     return render_template('transfer.html')
 
-"""
-@app.route('/image_generator', methods=["GET", "POST"])
-def image_generator():
-    image = None
-    if request.method == 'POST':
-        query = request.form.get("query")
-        pipeline = StableDiffusionPipeline(model="CompVis/stable-diffusion-v1-4", torch_dtype=torch.float16)
-        pipe = pipe.to("cuda")
-        image = pipeline.run(query).images[0]
-    return render_template('image_generator.html', img = image)
-
-@app.route('/video_generator', methods=["GET", "POST"])
-def video_generator():
-    video = None
-    if request.method == "POST":
-        query = request.form.get("query")
-        video = genai.GenerativeModel('gemini-1.5-flash').generate_video(query)
-    return render_template('video_generator.html', vid = video)
-"""
 if __name__ == "__main__":
     app.run()
