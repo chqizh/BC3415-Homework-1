@@ -12,9 +12,8 @@ from transformers import pipeline
 #from web3 import Web3 # Too large for Render.com, using JS Web3 instead
 
 load_dotenv()
-API_KEY = os.getenv('API_KEY')
-genai.configure(api_key=API_KEY)
-#print("API_KEY " + API_KEY)
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+genai.configure(api_key=GEMINI_API_KEY)
 app = Flask(__name__)
 
 @app.route("/",methods=["GET","POST"])
@@ -24,8 +23,6 @@ def index():
 @app.route("/financial_FAQ",methods=["GET","POST"])
 def financial_FAQ():
     return(render_template("financial_FAQ.html"))
-
-model = {"model": "models/text-bison-001"}
 
 @app.route("/makersuite",methods=["GET","POST"])
 def makersuite():
@@ -49,18 +46,15 @@ def joke():
     joke = random.choice(jokes)
     return render_template('joke.html', joke=joke)
 
-predictionmodel = joblib.load('model/dbs_model.jl')
-
 @app.route('/prediction', methods=['POST', 'GET'])
 def prediction():
+    predictionmodel = joblib.load('model/dbs_model.jl')
     predicted_price = None
     if request.method == 'POST':
         try:
-            # Get the input value from the form
             sgd_value = float(request.form['sgd_value'])
-
-            # Make a prediction using the loaded model
             predicted_price = predictionmodel.predict([[sgd_value]])
+            return render_template('prediction.html', predicted_price=predicted_price[0][0])
 
         except Exception as e:
             print("Error during prediction:", e)
@@ -77,8 +71,8 @@ def sentiment():
             text = str(request.form['text'])
             print(text)
             sentiment_textblob = TextBlob(text).sentiment
-            sentiment_transformers = pipeline("sentiment-analysis", device="mps")(text)
-            #sentiment_transformers = pipeline("sentiment-analysis", device="cpu")(text)
+            #sentiment_transformers = pipeline("sentiment-analysis", device="mps", model="distilbert/distilbert-base-uncased-finetuned-sst-2-english")(text)
+            sentiment_transformers = pipeline("sentiment-analysis", device="cpu", model="distilbert/distilbert-base-uncased-finetuned-sst-2-english")(text)
             sentiment_transformers = f"label: {sentiment_transformers[0]['label']}, score: {sentiment_transformers[0]['score']}"
 
         except Exception as e:
